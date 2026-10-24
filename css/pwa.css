@@ -1,0 +1,58 @@
+/* ============================================================
+   PLUTUS — "Install app" modal (matches the site: black, hairline
+   borders, electric-blue accent, wide-tracked uppercase labels)
+   ============================================================ */
+html.pwa-lock, html.pwa-lock body { overflow: hidden; }
+.pwa-overlay {
+  position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  background: radial-gradient(ellipse at 50% 38%, color-mix(in srgb, var(--accent, #3ea6ff) 14%, transparent), rgba(0, 0, 0, .86) 62%), rgba(0, 0, 0, .78);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity .25s ease;
+}
+/* light theme: a soft slate veil instead of near-black */
+:root:not([data-theme="dark"]) .pwa-overlay { background: radial-gradient(ellipse at 50% 38%, rgba(36, 71, 196, .14), rgba(21, 33, 59, .5) 62%), rgba(21, 33, 59, .35); }
+.pwa-overlay.in { opacity: 1; }
+.pwa-modal {
+  position: relative; width: min(440px, 100%); max-height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; text-align: center;
+  background-color: var(--pop-bg, #07090c);
+  border: 1px solid var(--line-2, #262b34); border-radius: 14px;
+  padding: 38px 30px 24px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent, #3ea6ff) 8%, transparent), var(--pop-shadow, 0 30px 80px rgba(0, 0, 0, .7)), 0 0 60px color-mix(in srgb, var(--accent, #3ea6ff) 10%, transparent);
+  transform: translateY(16px) scale(.98); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+}
+.pwa-overlay.in .pwa-modal { transform: none; }
+.pwa-modal::before { content: ""; position: absolute; left: 24px; right: 24px; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent, #3ea6ff), transparent); box-shadow: 0 0 14px var(--accent, #3ea6ff); }
+.pwa-close { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--line-2, #262b34); color: var(--muted, #7f8692); transition: all .2s; }
+.pwa-close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.pwa-close:hover, .pwa-close:focus-visible { color: var(--text, #eef0f3); border-color: var(--accent, #3ea6ff); outline: none; }
+.pwa-orb { width: 54px; height: 54px; margin: 0 auto 22px; border-radius: 50%; border: 2px solid var(--accent, #3ea6ff); box-shadow: 0 0 26px color-mix(in srgb, var(--accent, #3ea6ff) 65%, transparent), inset 0 0 18px color-mix(in srgb, var(--accent, #3ea6ff) 25%, transparent); position: relative; animation: pwaGlow 3.2s ease-in-out infinite; }
+.pwa-orb span { position: absolute; inset: 16px; border-radius: 50%; background: var(--hi, #fff); }
+@keyframes pwaGlow { 50% { box-shadow: 0 0 36px color-mix(in srgb, var(--accent, #3ea6ff) 90%, transparent), inset 0 0 22px color-mix(in srgb, var(--accent, #3ea6ff) 35%, transparent); } }
+.pwa-eyebrow { font-size: 11px; letter-spacing: .4em; text-transform: uppercase; color: var(--accent, #3ea6ff); margin-bottom: 14px; padding-left: .4em; }
+.pwa-modal h2 { font-size: clamp(24px, 6vw, 30px); font-weight: 300; line-height: 1.15; text-transform: uppercase; letter-spacing: .02em; color: var(--text, #eef0f3); margin-bottom: 16px; }
+.pwa-desc { font-size: 14px; line-height: 1.7; color: var(--ind-text, #b4bcc9); max-width: 34ch; margin: 0 auto 24px; }
+.pwa-perks { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line, #1a1e25); border-bottom: 1px solid var(--line, #1a1e25); margin-bottom: 24px; }
+.pwa-perks li { padding: 14px 6px; display: flex; flex-direction: column; gap: 5px; border-right: 1px solid var(--line, #1a1e25); min-width: 0; }
+.pwa-perks li:last-child { border-right: 0; }
+.pwa-perks b { font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--ind-label, #8fc4ff); padding-left: .24em; }
+.pwa-perks span { font-size: 12px; line-height: 1.4; color: var(--ind-text, #b4bcc9); }
+.pwa-steps { list-style: none; display: grid; gap: 10px; margin-bottom: 24px; text-align: left; }
+.pwa-steps li { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line-2, #262b34); border-radius: 8px; background: var(--card-bg, #050608); font-size: 13px; line-height: 1.5; color: var(--ind-text, #b4bcc9); }
+.pwa-steps b { color: var(--text, #eef0f3); font-weight: 600; }
+.pwa-step-ico { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--accent, #3ea6ff); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #3ea6ff) 25%, transparent); }
+.pwa-step-ico svg { width: 17px; height: 17px; fill: none; stroke: var(--accent, #3ea6ff); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pwa-step-ico svg circle { fill: var(--accent, #3ea6ff); stroke: none; }
+.pwa-actions { display: flex; flex-direction: column; gap: 10px; }
+.pwa-btn { width: 100%; padding: 14px 20px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; transition: all .2s; border: 1px solid var(--line-2, #262b34); }
+.pwa-btn-primary { background: var(--accent, #3ea6ff); border-color: var(--accent, #3ea6ff); color: var(--on-accent, #000); box-shadow: 0 0 24px color-mix(in srgb, var(--accent, #3ea6ff) 35%, transparent); }
+.pwa-btn-primary:hover, .pwa-btn-primary:focus-visible { background: var(--accent-hover, #7cc2ff); border-color: var(--accent-hover, #7cc2ff); box-shadow: 0 0 34px color-mix(in srgb, var(--accent, #3ea6ff) 60%, transparent); outline: none; }
+.pwa-btn-ghost { background: transparent; color: var(--muted, #7f8692); font-weight: 500; }
+.pwa-btn-ghost:hover, .pwa-btn-ghost:focus-visible { color: var(--text, #eef0f3); border-color: var(--accent, #3ea6ff); outline: none; }
+.pwa-note { margin-top: 18px; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted, #8b93a0); }
+@media (max-width: 520px) {
+  .pwa-overlay { align-items: flex-end; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+  .pwa-modal { padding: 32px 20px 20px; border-radius: 16px; transform: translateY(40px); }
+  .pwa-perks span { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) { .pwa-overlay, .pwa-modal { transition: none; } .pwa-orb { animation: none; } }

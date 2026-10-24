@@ -7,7 +7,7 @@
    proxies — unreliable, demo only.
    ============================================================ */
 window.APP_CONFIG = {
-  WORKER_URL: "https://plutus-proxy.plutus1410.workers.dev",
+  WORKER_URL: "https://broad-tree-45a0.plutus1410.workers.dev/",
   LOGODEV_KEY: "pk_bhlc52p0TIy8HasyFvNnVA",
   PUBLIC_PROXIES: [
     "https://api.allorigins.win/raw?url=",

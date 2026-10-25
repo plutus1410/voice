@@ -1,0 +1,104 @@
+/* ============================================================
+   PLUTUS — "Latest In News" sidebar
+   (uses the site's colour variables; fallbacks keep it standalone)
+   ============================================================ */
+
+/* ---- layout: content on the left, news column on the right (wide screens) ---- */
+.view-dash.has-news { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 28px; }
+.view-dash.has-news > #dashContent,
+.view-dash.has-news > #dashLoading,
+.view-dash.has-news > #dashError { grid-column: 1; min-width: 0; }
+.view-dash.has-news > #dashError { align-self: start; } /* don't stretch the error box to the page height */
+
+.news {
+  grid-column: 1; margin-top: 56px; min-width: 0;
+  background: color-mix(in srgb, var(--accent) 4%, var(--card-bg)); border: 1px solid var(--line-2); border-radius: var(--radius);
+  padding: 22px 20px 16px; position: relative;
+}
+.news::before { content: ""; position: absolute; top: -1px; left: -1px; width: 18px; height: 18px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+
+/* collapse controls only exist on the wide layout (sidebar); below it the news sits under the content */
+.news-rail, .news-collapse { display: none; }
+
+@media (min-width: 1280px) {
+  .view-dash.has-news { max-width: 1680px; grid-template-columns: minmax(0, 1fr) 340px; transition: grid-template-columns .35s cubic-bezier(.2, .8, .2, 1), column-gap .35s ease; }
+  .view-dash.has-news > #dashContent,
+  .view-dash.has-news > #dashLoading,
+  .view-dash.has-news > #dashError { grid-row: 1; }
+  .news {
+    grid-column: 2; grid-row: 1; margin-top: 30px;
+    position: sticky; top: calc(var(--topbar-h, 68px) + var(--safe-top, 0px) + 16px); align-self: start;
+    max-height: calc(100vh - var(--topbar-h, 68px) - var(--safe-top, 0px) - 32px); max-height: calc(100dvh - var(--topbar-h, 68px) - var(--safe-top, 0px) - 32px);
+    overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2, #262b34) transparent;
+  }
+  /* keep the text at full width while the column slides open, so it is revealed instead of re-wrapping */
+  .news > .news-head, .news > .news-sub, .news > .news-body { min-width: 298px; }
+
+  /* "collapse" button in the header (expanded state) */
+  .news-collapse {
+    display: inline-flex; align-items: center; justify-content: center; flex: none; margin-left: auto; width: 28px; height: 28px; border-radius: 50%;
+    background: transparent; border: 1px solid var(--line-2, #262b34); color: var(--muted, #7f8692); transition: border-color .2s, color .2s;
+  }
+  .news-collapse:hover, .news-collapse:focus-visible { border-color: var(--accent, #3ea6ff); color: var(--text, #eef0f3); outline: none; }
+  .news-collapse svg, .news-rail svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* collapsed: a slim rail at the right edge, the main content takes the rest of the screen */
+  .view-dash.has-news.news-collapsed { grid-template-columns: minmax(0, 1fr) 48px; column-gap: 18px; }
+  .news-collapsed .news { padding: 0; overflow: hidden; }
+  .news-collapsed .news > :not(.news-rail) { display: none; }
+  .news-collapsed .news-rail {
+    display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; padding: 14px 0 16px;
+    background: transparent; border: 0; color: var(--muted, #7f8692); transition: color .2s, background .2s;
+  }
+  .news-rail:hover, .news-rail:focus-visible { color: var(--text, #eef0f3); background: color-mix(in srgb, var(--accent, #3ea6ff) 7%, transparent); outline: none; }
+  .news-rail:focus-visible { box-shadow: inset 0 0 0 2px var(--accent, #3ea6ff); }
+  .news-rail .nr-ico { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-2, #262b34); transition: border-color .2s; }
+  .news-rail:hover .nr-ico, .news-rail:focus-visible .nr-ico { border-color: var(--accent, #3ea6ff); }
+  .news-rail .nr-label { writing-mode: vertical-rl; font-size: 11px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--text, #eef0f3); white-space: nowrap; }
+  .news-rail .nr-count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--accent, #3ea6ff); border: 1px solid var(--accent, #3ea6ff); }
+  .news-rail .nr-count:empty { display: none; }
+}
+@media (min-width: 1280px) and (prefers-reduced-motion: reduce) { .view-dash.has-news { transition: none; } }
+
+/* ---- header ---- */
+.news-head { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--line, #1a1e25); margin-bottom: 4px; }
+.news-head h2 { font-size: 12px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--text, #eef0f3); }
+.news-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent, #3ea6ff); box-shadow: 0 0 10px var(--accent, #3ea6ff); animation: newsPulse 2s ease-in-out infinite; flex-shrink: 0; }
+@keyframes newsPulse { 50% { opacity: .35; } }
+
+/* ---- subtitle + body ---- */
+.news-sub { margin: 12px 0 4px; font-size: 12px; color: var(--muted, #7f8692); line-height: 1.45; overflow-wrap: anywhere; min-height: 1.45em; }
+.news-body { min-width: 0; }
+
+.news-list { list-style: none; }
+.news-list li { border-bottom: 1px solid var(--line, #1a1e25); }
+.news-list li:last-child { border-bottom: 0; }
+.news-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 6px; margin: 0 -6px; color: inherit; text-decoration: none; border-radius: 4px; transition: background .15s; }
+.news-item:hover, .news-item:focus-visible { background: color-mix(in srgb, var(--accent, #3ea6ff) 7%, transparent); outline: none; }
+.ni-txt { display: block; min-width: 0; }
+.ni-title { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 13.5px; line-height: 1.4; color: var(--text, #eef0f3); overflow-wrap: anywhere; }
+.news-item:hover .ni-title { color: var(--hi, #fff); }
+.ni-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 6px; font-size: 11px; color: var(--muted, #7f8692); }
+.ni-tag { font-size: 9px; letter-spacing: .16em; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; border: 1px solid var(--accent, #3ea6ff); color: var(--accent, #3ea6ff); white-space: nowrap; align-self: center; }
+.ni-tag-ind { border-color: var(--accent-2, #9d8cff); color: var(--accent-2, #9d8cff); }
+.ni-pub { color: var(--dim, #4b515b); max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ni-pub + .ni-time::before { content: "\00B7"; margin-right: 8px; color: var(--dim, #4b515b); }
+.ni-img { display: block; width: 64px; height: 64px; border-radius: 6px; overflow: hidden; background: var(--line, #0b0e13); border: 1px solid var(--line, #1a1e25); flex-shrink: 0; }
+.ni-img img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.news-empty { padding: 10px 0 6px; font-size: 12.5px; color: var(--dim, #4b515b); line-height: 1.55; }
+.news-retry { margin: 4px 0 6px; background: transparent; color: var(--text, #eef0f3); border: 1px solid var(--line-2, #262b34); padding: 7px 14px; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; border-radius: 2px; }
+.news-retry:hover { border-color: var(--accent, #3ea6ff); }
+
+/* ---- loading placeholders ---- */
+.news-skel { display: grid; gap: 7px; padding: 14px 0; }
+.news-skel span { display: block; height: 10px; border-radius: 3px; background: var(--line, #1a1e25); animation: newsPulse 1.3s ease-in-out infinite; }
+.news-skel span:first-child { width: 92%; height: 12px; }
+.news-skel span:last-child { width: 38%; }
+
+@media (max-width: 640px) {
+  .news { margin-top: 44px; padding: 18px 14px 14px; }
+  .ni-img { width: 56px; height: 56px; }
+  .ni-title { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .news-dot, .news-skel span { animation: none; } }

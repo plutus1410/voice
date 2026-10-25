@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PLUTUS — Your AI Stock Analysis Companion</title>
+  <meta name="description" content="Search any listed company and see its financial health in plain English." />
+  <meta name="theme-color" content="#f6f3ec" />
+    <!-- theme: light by default; a saved choice (the toggle in the top bar) wins. Runs before the CSS so the page never flashes the wrong theme. -->
+    <script>(function(){var t='light';try{t=localStorage.getItem('plutus.theme.v1')==='dark'?'dark':'light';}catch(e){}document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',t==='dark'?'#000000':'#f6f3ec');})();</script>
+    <!-- PWA: installable web app -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="PLUTUS" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png" />
+    <!-- catch the browser's install event as early as possible (it can fire before js/pwa.js has loaded) -->
+    <script>window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__plutusInstallEvt=e;try{window.dispatchEvent(new Event('plutus:installready'));}catch(x){}});</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='none' stroke='%233ea6ff' stroke-width='2'/><circle cx='16' cy='16' r='4' fill='%23fff'/></svg>" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
+  <link rel="stylesheet" href="css/news.css?v=23" />
+    <link rel="stylesheet" href="css/pwa.css?v=23" />
+    <link rel="stylesheet" href="css/voice.css?v=24" />
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+
+  <!-- ======================= TOP BAR (fixed) ======================= -->
+  <header class="topbar" id="topbar">
+    <a class="brand" href="#/" aria-label="Home"><span class="brand-orb"></span><span class="brand-text">PLUTUS</span></a>
+    <div class="mini-search hidden" id="miniSearchWrap">
+      <svg class="mini-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="miniSearch" type="text" placeholder="Search another company…" autocomplete="off" spellcheck="false" aria-label="Search another company" />
+      <ul class="suggest" id="miniSuggest" role="listbox"></ul>
+    </div>
+    <!-- "Compare with industry average" switch: lives in the fixed top bar, so it stays in reach and never takes page space. Label: "Compare with industry" on wide screens, "Industry avg" on tablets and phones -->
+    <button type="button" class="cmp-btn hidden" id="cmpBtn" role="switch" aria-checked="false" aria-label="Compare with industry average" data-tip="Show this company's numbers next to the average of similar companies in its industry">
+      <span class="cmp-t"><span class="cmp-tl">Compare with industry</span><span class="cmp-ts">Industry avg</span></span>
+      <span class="cmp-trk" aria-hidden="true"><i></i></span>
+    </button>
+    <!-- light / dark switch (light is the default) -->
+    <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" data-tip="Dark mode">
+      <svg class="t-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </header>
+  <div class="cmp-toast" id="cmpToast" role="status" aria-live="polite"></div>
+
+  <!-- ======================= VIEW 1: SEARCH ======================= -->
+  <main id="viewSearch" class="view view-search">
+    <div class="horizon" aria-hidden="true"></div>
+    <section class="hero">
+      <p class="eyebrow">Your AI stock analysis companion</p>
+      <h1>Know the company<br />before you own it.</h1>
+      <div class="search-wrap">
+        <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="mainSearch" type="text" placeholder="Type a company name — e.g. Reliance, Apple"
+               autocomplete="off" spellcheck="false" aria-label="Search company" />
+        <ul class="suggest" id="mainSuggest" role="listbox"></ul>
+      </div>
+      <div class="chips" id="quickChips">
+        <span class="chips-label">Try</span>
+        <!-- 3 Indian + 3 US companies -->
+        <button data-s="RELIANCE.NS"><b class="chip-cc">IN</b>Reliance</button>
+        <button data-s="TCS.NS"><b class="chip-cc">IN</b>TCS</button>
+        <button data-s="HDFCBANK.NS"><b class="chip-cc">IN</b>HDFC Bank</button>
+        <button data-s="AAPL"><b class="chip-cc">US</b>Apple</button>
+        <button data-s="MSFT"><b class="chip-cc">US</b>Microsoft</button>
+        <button data-s="NVDA"><b class="chip-cc">US</b>NVIDIA</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= VIEW 2: DASHBOARD (+ "Latest In News" sidebar, added by js/news.js) ======================= -->
+  <main id="viewDash" class="view view-dash hidden">
+    <div id="dashLoading" class="loading hidden">
+      <div class="orbit"><span></span></div>
+      <p class="loading-text"><span id="loadingMsg">ACQUIRING TELEMETRY</span> <span id="loadingSym"></span></p>
+    </div>
+    <div id="dashError" class="error hidden"></div>
+    <div id="dashContent" class="hidden"></div>
+  </main>
+
+  <footer class="foot">
+    <p>PLUTUS presents publicly available data from Yahoo Finance for educational purposes. It is <strong>not investment advice</strong> and does not recommend buying, selling or holding any security. Data may be delayed or incomplete — verify with official company filings.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="js/config.js?v=23"></script>
+  <script src="js/analysis.js?v=23"></script>
+  <script src="js/app.js?v=23"></script>
+  <script src="js/news.js?v=23"></script>
+    <script src="js/pwa.js?v=23"></script>
+    <script src="js/voice.js?v=24"></script>
+</body>
+</html>
